@@ -36,8 +36,14 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import FileUpload from "../global/file-upload";
-import { Select, SelectContent, SelectItem, SelectValue } from "../ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+  SelectTrigger,
+} from "../ui/select";
+
 import { Button } from "../ui/button";
 import Loading from "../global/loading";
 import { Separator } from "../ui/separator";
@@ -300,9 +306,9 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
                         <SelectValue placeholder="Select user role ..." />
                       </SelectTrigger>
                     </FormControl>
+
                     <SelectContent>
                       <SelectItem value="AGENCY_ADMIN">Agency Admin</SelectItem>
-
                       {(data?.user?.role === "AGENCY_OWNER" ||
                         userData?.role === "AGENCY_OWNER") && (
                         <SelectItem value="AGENCY_OWNER">
@@ -342,7 +348,7 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
                     return (
                       <div
                         key={subAccount.id}
-                        className="flex flex-col items-center justify-between rounded-lg border p-4"
+                        className="flex items-center justify-between rounded-lg border p-4"
                       >
                         <div>
                           <p>{subAccount.name}</p>
