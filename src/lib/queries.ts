@@ -3,8 +3,10 @@
 import { clerkClient, currentUser } from "@clerk/nextjs";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, Plan, Role, SubAccount, User } from "@prisma/client";
+import { Agency, Plan, Prisma, Role, SubAccount, User } from "@prisma/client";
 import { v4 } from "uuid";
+import { CreateFunnelFormSchema, CreateMediaType } from "./types";
+import { z } from "zod";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -121,7 +123,7 @@ export const createTeamUser = async (agencyId: String, user: User) => {
   return response;
 };
 
-export const verfiyAndAcceptInvitation = async () => {
+export const verifyAndAcceptInvitation = async () => {
   const user = await currentUser();
   if (!user) return redirect("/sign-in");
 
@@ -471,4 +473,98 @@ export const sendInvitation = async (
   }
 
   return resposne;
+};
+
+export const getMedia = async (subaccountId: string) => {
+  const mediafiles = await db.subAccount.findUnique({
+    where: {
+      id: subaccountId,
+    },
+    include: { Media: true },
+  });
+  return mediafiles;
+};
+
+export const createMedia = async (
+  subaccountId: string,
+  mediaFiles: CreateMediaType
+) => {
+  const response = await db.media.create({
+    data: {
+      link: mediaFiles.link,
+      name: mediaFiles.name,
+      subAccountId: subaccountId,
+    },
+  });
+  return response;
+};
+
+export const deleteMedia = async (mediaId: string) => {
+  const response = await db.media.delete({
+    where: {
+      id: mediaId,
+    },
+  });
+  return response;
+};
+
+export const getPipelineDetails = async (pipelineId: string) => {
+  const response = await db.pipeline.findUnique({
+    where: {
+      id: pipelineId,
+    },
+  });
+  return response;
+};
+
+export const getLanesWithTicketAndTags = async (pipelineId: string) => {
+  const response = await db.lane.findMany({
+    where: {
+      pipelineId,
+    },
+    orderBy: { order: "asc" },
+    include: {
+      Tickets: {
+        orderBy: {
+          order: "asc",
+        },
+        include: {
+          Tags: true,
+          Assigned: true,
+          Customer: true,
+        },
+      },
+    },
+  });
+  return response;
+};
+
+export const upsertFunnel = async (
+  subaccountId: string,
+  funnel: z.infer<typeof CreateFunnelFormSchema> & { liveProducts: string },
+  funnelId: string
+) => {
+  const response = await db.funnel.upsert({
+    where: { id: funnelId },
+    update: funnel,
+    create: {
+      ...funnel,
+      id: funnelId || v4(),
+      subAccountId: subaccountId,
+    },
+  });
+
+  return response;
+};
+
+export const upsertPipeline = async (
+  pipeline: Prisma.PipelineUncheckedCreateWithoutLaneInput
+) => {
+  const response = await db.pipeline.upsert({
+    where: { id: pipeline.id || v4() },
+    update: pipeline,
+    create: pipeline,
+  });
+
+  return response;
 };

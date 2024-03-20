@@ -4,7 +4,7 @@ import Unauthorized from "@/components/unauthorized";
 import {
   getAuthUserDetails,
   getNotificationAndUser,
-  verfiyAndAcceptInvitation,
+  verifyAndAcceptInvitation,
 } from "@/lib/queries";
 import { currentUser } from "@clerk/nextjs";
 import { Role } from "@prisma/client";
@@ -13,17 +13,13 @@ import React from "react";
 
 type Props = {
   children: React.ReactNode;
-  params: {
-    subaccountId: string;
-  };
+  params: { subaccountId: string };
 };
 
 const SubaccountLayout = async ({ children, params }: Props) => {
-  const agencyId = await verfiyAndAcceptInvitation();
+  const agencyId = await verifyAndAcceptInvitation();
   if (!agencyId) return <Unauthorized />;
-
   const user = await currentUser();
-
   if (!user) {
     return redirect("/");
   }
@@ -31,16 +27,14 @@ const SubaccountLayout = async ({ children, params }: Props) => {
   let notifications: any = [];
 
   if (!user.privateMetadata.role) {
-    // TODO: FIX ERROR - All users is getting unauthorized
-    // console.log("🔴 authorized in privateMetadeta");
     return <Unauthorized />;
   } else {
-    console.log("🔴 authorized in not privateMetadeta");
     const allPermissions = await getAuthUserDetails();
     const hasPermission = allPermissions?.Permissions.find(
-      (permissions) =>
-        permissions.access && permissions.subAccountId === params.subaccountId
+      (permission) =>
+        permission.access && permission.subAccountId === params.subaccountId
     );
+
     if (!hasPermission) {
       return <Unauthorized />;
     }

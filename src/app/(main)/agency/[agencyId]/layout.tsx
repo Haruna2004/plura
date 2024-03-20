@@ -4,7 +4,7 @@ import Sidebar from "@/components/sidebar";
 import Unauthorized from "@/components/unauthorized";
 import {
   getNotificationAndUser,
-  verfiyAndAcceptInvitation,
+  verifyAndAcceptInvitation,
 } from "@/lib/queries";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const Layout = async ({ children, params }: Props) => {
-  const agencyId = await verfiyAndAcceptInvitation();
+  const agencyId = await verifyAndAcceptInvitation();
   const user = await currentUser();
 
   if (!user) return redirect("/");
