@@ -115,7 +115,7 @@ const MenuOptions = ({
               {
                 <Command className="rounded-lg">
                   <CommandInput placeholder="Search Accounts..." />
-                  <CommandList className="pb-16">
+                  <CommandList className="pb-16 scrollbar-none">
                     <CommandEmpty>No results found</CommandEmpty>
                     {(user?.role === "AGENCY_OWNER" ||
                       user?.role === "AGENCY_ADMIN") &&

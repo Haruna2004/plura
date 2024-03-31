@@ -37,7 +37,7 @@ const Layout = async ({ children, params }: Props) => {
       <Sidebar id={params.agencyId} type="agency" />
       <div className="md:pl-[300px]">
         <InfoBar notifications={allNoti} />
-        <div className="relative">
+        <div className="relative scrollbar-none">
           <BlurPage>{children}</BlurPage>
         </div>
       </div>

@@ -18,6 +18,7 @@ import {
 } from "./queries";
 import { db } from "./db";
 import { z } from "zod";
+import Stripe from "stripe";
 
 export type NotificationWithUser =
   | ({
@@ -107,3 +108,30 @@ export const TicketFormSchema = z.object({
 export type TicketDetails = Prisma.PromiseReturnType<
   typeof _getTicketsWithAllRelations
 >;
+
+export const ContactUserFormSchema = z.object({
+  name: z.string().min(1, "Required"),
+  email: z.string().email(),
+});
+
+export type Address = {
+  city: string;
+  country: string;
+  line1: string;
+  postal_code: string;
+  state: string;
+};
+
+export type ShippingInfo = {
+  address: Address;
+  name: string;
+};
+
+export type StripeCustomerType = {
+  name: string;
+  email: string;
+  shipping: ShippingInfo;
+  address: Address;
+};
+
+export type PriceList = Stripe.ApiList<Stripe.Price>;

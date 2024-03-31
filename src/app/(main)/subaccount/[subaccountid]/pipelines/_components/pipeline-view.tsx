@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import PipelineLane from "./pipeline-lane";
+import { StrictModeDroppable } from "@/components/global/strictmode-droppable";
 
 type Props = {
   lanes: LaneDetail[];
@@ -60,7 +61,7 @@ const PipelineView = ({
   }, [lanes]);
 
   const onDragEnd = (dropResult: DropResult) => {
-    console.log(dropResult);
+    // console.log(dropResult);
     const { destination, source, type } = dropResult;
     if (
       !destination ||
@@ -143,7 +144,8 @@ const PipelineView = ({
             Create Lane
           </Button>
         </div>
-        <Droppable
+
+        <StrictModeDroppable
           droppableId="lanes"
           type="lane"
           direction="horizontal"
@@ -151,7 +153,7 @@ const PipelineView = ({
         >
           {(provided) => (
             <div
-              className="flex item-center gap-x-2 overflow-scroll"
+              className="flex item-center gap-x-2 overflow-scroll scrollbar-none"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
@@ -172,7 +174,7 @@ const PipelineView = ({
               </div>
             </div>
           )}
-        </Droppable>
+        </StrictModeDroppable>
         {allLanes.length == 0 && (
           <div className="flex items-center justify-center w-full flex-col">
             <div className="opacity-100">
